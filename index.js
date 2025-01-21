@@ -62,8 +62,23 @@ class Tournament {
 
     // უნიკალური ფერის შერჩევის ალგორითმი
     // არ აძლევს ერთნაირ ფერებს მოწინააღმდეგეებს
+    /**
+     * აბრუნებს უნიკალურ ფერს ხელმისაწვდომი ფერების მასივიდან.
+     * excludeColor პარამეტრი საშუალებას გვაძლევს გამოვრიცხოთ კონკრეტული ფერი არჩევისას.
+     * თუ ყველა ფერი უკვე გამოყენებულია, ასუფთავებს გამოყენებული ფერების ისტორიას და იწყებს თავიდან.
+     * 
+     * @param {string|null} excludeColor - ფერი რომელიც არ უნდა იქნას არჩეული (გამოსარიცხი ფერი)
+     * @returns {string} შემთხვევითად არჩეული უნიკალური ფერი
+     */
     getUniqueColor(excludeColor = null) {
         // ხელმისაწვდომი ფერების გაფილტვრა
+        /**
+         * ფილტრავს ფერების მასივს და აბრუნებს იმ ფერებს რომლებიც:
+         * 1. არ არის უკვე გამოყენებული (არ არის usedColors მასივში)
+         * 2. არ უდრის excludeColor პარამეტრს
+         * @returns {Array} ხელმისაწვდომი ფერების მასივი
+         */
+
         let availableColors = this.colors.filter(color => 
             !this.usedColors.includes(color) && color !== excludeColor
         );
@@ -102,20 +117,21 @@ class Tournament {
     // მატჩების ჩვენება ეკრანზე
     // მატჩები თანაბრად ნაწილდება მარცხენა და მარჯვენა მხარეს
     render() {
+        // მიმდინარე რაუნდის ნომერის განახლება
         document.getElementById('roundNumber').textContent = this.currentRound;
         const left = document.getElementById('leftSection');
         const right = document.getElementById('rightSection');
         
-        // Clear previous round's matches
+        // წინა რაუნდის მატჩების გასუფთავება
         left.innerHTML = '';
         right.innerHTML = '';
 
-        // Distribute matches evenly between left and right sections
+        // მატჩების თანაბრად განაწილება მარცხენა და მარჯვენა სექციებში
         if (this.matches.length > 1) {
             const half = this.matches.length / 2;
             this.matches.forEach((match, i) => {
                 const el = this.createMatchElement(match);
-                // First half goes to left, second half to right
+                // პირველი ნახევარი მარცხნივ, მეორე ნახევარი მარჯვნივ
                 (i < half ? left : right).appendChild(el);
             });
         }
@@ -172,7 +188,7 @@ class Tournament {
 
     // შემდეგი რაუნდის ღილაკის ფუნქციონალის დამატება
     setupControls() {
-        // Clone and replace button to remove old event listeners
+        // ჩავანაცვლოთ ღილაკი
         const btn = document.getElementById('nextRoundBtn');
         btn.replaceWith(btn.cloneNode(true));
         document.getElementById('nextRoundBtn').onclick = () => this.progressRound();
